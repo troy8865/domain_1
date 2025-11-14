@@ -8,11 +8,11 @@ HEADERS = {"User-Agent": USER_AGENT}
 def check_domain(i):
     url = f"https://justsporthd{i}.xyz/"
     try:
-        r = requests.get(url, headers=HEADERS, timeout=5)
+        r = requests.get(url, headers=HEADERS, timeout=10)  # Timeout artırıldı
         if r.status_code == 200 and "JustSportHD" in r.text:
             return url
-    except:
-        pass
+    except Exception as e:
+        print(f"{url} başarısız: {e}")
     return None
 
 def find_working_domain_parallel(start=40, end=100, max_workers=10):
@@ -31,14 +31,16 @@ def main():
 
     domain = find_working_domain_parallel()
     if domain:
-        print("Çalışan domain bulundu:", domain)
+        print(f"Çalışan domain bulundu: {domain}")
         with open("working_domain.txt", "w") as f:
             f.write(domain)
-        # Workflow için env değişkeni olarak kaydet
+        # Workflow için env değişkeni
         with open(os.environ["GITHUB_ENV"], "a") as env:
             env.write("DOMAIN_FOUND=true\n")
+            env.write(f"DOMAIN_URL={domain}\n")  # domain’i ayrıca environment olarak kaydediyoruz
     else:
         print("Domain bulunamadı.")
+        # Dosya yazmayacağız, sadece workflow değişkenini false yapacağız
         with open(os.environ["GITHUB_ENV"], "a") as env:
             env.write("DOMAIN_FOUND=false\n")
 
