@@ -1,9 +1,11 @@
 import os
 
-# Test olarak direkt dosya oluştur
-current_dir = os.getcwd()
-file_path = os.path.join(current_dir, "working_domain.txt")
-print("Mevcut dizin:", current_dir)
+# Repo kök dizini
+repo_dir = os.environ.get("GITHUB_WORKSPACE", os.getcwd())
+file_path = os.path.join(repo_dir, "working_domain.txt")
+
+print("Dosya yazılacak dizin:", repo_dir)
+print("Mutlak dosya yolu:", file_path)
 
 try:
     with open(file_path, "w") as f:
@@ -12,4 +14,4 @@ try:
 except Exception as e:
     print("Dosya oluşturulamadı:", e)
 
-print("Dizin içeriği:", os.listdir(current_dir))
+print("Dizin içeriği:", os.listdir(repo_dir))
