@@ -1,35 +1,42 @@
-name: Find JustSportHD Domain
+name: JustSportHD Domain Check
 
 on:
-  workflow_dispatch:  # Elle tetikleme
+  workflow_dispatch:   # Elle tetikleme
   schedule:
-    - cron: '0 12 * * *'  # Günlük 12:00 otomatik
+    - cron: '0 12 * * *'  # Her gün 12:00'de otomatik tetikleme
 
 jobs:
   domain_check:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Repo'yu checkout et
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # 2️⃣ Python kurulumu
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
+      # 3️⃣ Gerekli paketleri yükle
       - name: Install dependencies
         run: pip install requests
 
+      # 4️⃣ Domain kontrol scriptini çalıştır
       - name: Run domain checker
         run: python find_domain.py
 
-      - name: Debug: list repo files
+      # 5️⃣ Debug: repo kökünü ve dosyayı listele
+      - name: List repo files
         run: ls -la $GITHUB_WORKSPACE
 
+      # 6️⃣ Dosya içeriğini göster
       - name: Show working_domain.txt
         run: cat $GITHUB_WORKSPACE/working_domain.txt
 
+      # 7️⃣ Dosyayı artifact olarak yükle
       - name: Upload working_domain.txt
         uses: actions/upload-artifact@v4
         with:
