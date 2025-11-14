@@ -1,17 +1,53 @@
 import os
+import requests
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
-# Repo kök dizini
-repo_dir = os.environ.get("GITHUB_WORKSPACE", os.getcwd())
-file_path = os.path.join(repo_dir, "working_domain.txt")
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+HEADERS = {"User-Agent": USER_AGENT}
 
-print("Dosya yazılacak dizin:", repo_dir)
-print("Mutlak dosya yolu:", file_path)
+def check_domain(i):
+    url = f"https://justsporthd{i}.xyz/"
+    try:
+        r = requests.get(url, headers=HEADERS, timeout=10)
+        if r.status_code == 200 and "JustSportHD" in r.text:
+            print(f"✅ {url} çalışıyor!")
+            return url
+        else:
+            print(f"❌ {url} yanıt verdi ama içerik uygun değil (status={r.status_code})")
+    except Exception as e:
+        print(f"❌ {url} başarısız: {e}")
+    return None
 
-try:
+def find_working_domain_parallel(start=40, end=100, max_workers=10):
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = [executor.submit(check_domain, i) for i in range(start, end + 1)]
+        for future in as_completed(futures):
+            result = future.result()
+            if result:
+                return result
+    return None
+
+def main():
+    # Repo kök dizini
+    repo_dir = os.environ.get("GITHUB_WORKSPACE")
+    if not repo_dir:
+        raise RuntimeError("GITHUB_WORKSPACE env değişkeni bulunamadı!")
+
+    file_path = os.path.join(repo_dir, "working_domain.txt")
+    print("Dosya yazılacak dizin:", repo_dir)
+
+    # Domain tarama
+    domain = find_working_domain_parallel()
+    if not domain:
+        print("⚠️ Domain bulunamadı, sahte domain kullanılacak")
+        domain = "https://justsporthd99.xyz"
+
+    # Dosya oluşturma
     with open(file_path, "w") as f:
-        f.write("https://justsporthd99.xyz\n")
-    print("Dosya oluşturuldu!")
-except Exception as e:
-    print("Dosya oluşturulamadı:", e)
+        f.write(domain + "\n")
 
-print("Dizin içeriği:", os.listdir(repo_dir))
+    print("Dosya oluşturuldu:", file_path)
+    print("Dizin içeriği:", os.listdir(repo_dir))
+
+if __name__ == "__main__":
+    main()
