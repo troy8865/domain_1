@@ -4,6 +4,10 @@ import requests
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
 HEADERS = {"User-Agent": USER_AGENT}
 
+# Kontrol edilecek domain aralığı
+START = 40
+END = 101
+
 def check_domain(i):
     url = f"https://justsporthd{i}.xyz/"
     try:
@@ -15,27 +19,33 @@ def check_domain(i):
     return None
 
 def main():
-    # GitHub workspace dizini
-    repo_dir = os.environ.get("GITHUB_WORKSPACE", ".")
+    # Çalışma dizini (script’in olduğu dizin)
+    repo_dir = os.path.dirname(os.path.abspath(__file__))
     file_path = os.path.join(repo_dir, "working_domain.txt")
 
-    working_domain = None
-    for i in range(40, 101):
+    working_domains = []
+
+    print(f"🔎 Domain kontrolü başlıyor: justsporthd{START} → justsporthd{END}")
+
+    for i in range(START, END):
         domain = check_domain(i)
         if domain:
-            working_domain = domain
-            break
+            print(f"✅ Çalışan domain bulundu: {domain}")
+            working_domains.append(domain)
+        else:
+            print(f"❌ justsporthd{i}.xyz başarısız")
 
-    # fallback domain
-    if not working_domain:
-        working_domain = "https://justsporthd99.xyz"
+    if not working_domains:
+        print("⚠️ Hiç çalışan domain bulunamadı. Fallback domain kullanılacak.")
+        working_domains.append("https://justsporthd99.xyz")
 
-    # Dosyayı workspace içine yaz
+    # Dosyaya yaz
     with open(file_path, "w", encoding="utf-8") as f:
-        f.write(working_domain + "\n")
+        for domain in working_domains:
+            f.write(domain + "\n")
 
-    print(f"✅ Dosya oluşturuldu: {file_path}")
-    print(f"✅ Çalışan domain: {working_domain}")
+    print(f"💾 Dosya oluşturuldu: {file_path}")
+    print(f"📄 İçerik:\n" + "\n".join(working_domains))
 
 if __name__ == "__main__":
     main()
