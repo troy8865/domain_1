@@ -28,13 +28,13 @@ def find_working_domain_parallel(start=40, end=100, max_workers=10):
     return None
 
 def main():
-    # Repo kök dizini
+    # Repo kökü (GITHUB_WORKSPACE)
     repo_dir = os.environ.get("GITHUB_WORKSPACE")
     if not repo_dir:
         raise RuntimeError("GITHUB_WORKSPACE env değişkeni bulunamadı!")
 
     file_path = os.path.join(repo_dir, "working_domain.txt")
-    print("Dosya yazılacak dizin:", repo_dir)
+    print("Dosya yazılacak dizin:", file_path)
 
     # Domain tarama
     domain = find_working_domain_parallel()
@@ -47,7 +47,6 @@ def main():
         f.write(domain + "\n")
 
     print("Dosya oluşturuldu:", file_path)
-    print("Dizin içeriği:", os.listdir(repo_dir))
 
 if __name__ == "__main__":
     main()
