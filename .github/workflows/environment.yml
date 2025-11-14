@@ -27,9 +27,11 @@ jobs:
           AUTO_DOMAIN_CHECK: 1
         run: python find_domain.py
 
-      - name: Upload working_domain.txt
-        if: success() && exists('working_domain.txt')
-        uses: actions/upload-artifact@v3
-        with:
-          name: working-domain
-          path: working_domain.txt
+      - name: Upload working_domain.txt if exists
+        run: |
+          if [ -f working_domain.txt ]; then
+            echo "Uploading working_domain.txt..."
+            gh run upload-artifact working-domain working_domain.txt
+          else
+            echo "No domain found, skipping upload."
+          fi
