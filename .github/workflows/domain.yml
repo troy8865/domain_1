@@ -32,11 +32,9 @@ jobs:
         run: ls -la
 
       - name: Show working_domain.txt contents
-        if: env.DOMAIN_FOUND == 'true'
         run: cat working_domain.txt
 
-      - name: Upload working_domain.txt if domain found
-        if: env.DOMAIN_FOUND == 'true'
+      - name: Upload working_domain.txt
         uses: actions/upload-artifact@v4
         with:
           name: working-domain
