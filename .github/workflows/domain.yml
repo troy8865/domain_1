@@ -30,7 +30,7 @@ jobs:
 
       - name: Upload working_domain.txt if domain found
         if: env.DOMAIN_FOUND == 'true'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: working-domain
           path: working_domain.txt
