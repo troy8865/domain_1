@@ -34,10 +34,14 @@ def main():
         print("Çalışan domain bulundu:", domain)
         with open("working_domain.txt", "w") as f:
             f.write(domain)
-        print("DOMAIN_FOUND=true")  # workflow output için
+        # Workflow için env değişkeni olarak kaydet
+        print("DOMAIN_FOUND=true")
+        with open(os.environ["GITHUB_ENV"], "a") as env:
+            env.write("DOMAIN_FOUND=true\n")
     else:
         print("Domain bulunamadı.")
-        print("DOMAIN_FOUND=false")  # workflow output için
+        with open(os.environ["GITHUB_ENV"], "a") as env:
+            env.write("DOMAIN_FOUND=false\n")
 
 if __name__ == "__main__":
     main()
