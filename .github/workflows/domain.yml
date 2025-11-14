@@ -3,7 +3,7 @@ name: JustSportHD Domain Check
 on:
   workflow_dispatch:   # Elle tetikleme
   schedule:
-    - cron: '0 12 * * *'  # Günlük otomatik tetikleme
+    - cron: '0 12 * * *'  # Her gün 12:00'de otomatik tetikleme
 
 jobs:
   domain_check:
@@ -25,10 +25,14 @@ jobs:
         run: python find_domain.py
 
       - name: Debug: list repo files
-        run: ls -la $GITHUB_WORKSPACE
+        run: |
+          echo "Repo kökü:"
+          ls -la $GITHUB_WORKSPACE
 
       - name: Debug: find working_domain.txt
-        run: find $GITHUB_WORKSPACE -name working_domain.txt
+        run: |
+          echo "Aranıyor: working_domain.txt"
+          find $GITHUB_WORKSPACE -name working_domain.txt
 
       - name: Show working_domain.txt
         run: cat $GITHUB_WORKSPACE/working_domain.txt
