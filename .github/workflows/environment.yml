@@ -1,0 +1,14 @@
+name: justsporthd_domain
+channels:
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+      - requests
+prefix: ./env
+
+postBuild:
+  - echo "Otomatik domain taraması başlatılıyor..."
+  - export AUTO_DOMAIN_CHECK=1
+  - python find_domain.py
