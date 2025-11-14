@@ -1,15 +1,15 @@
 name: Find JustSportHD Domain
 
 on:
-  workflow_dispatch:  # Elle tetikleme için
+  workflow_dispatch:  # Elle tetikleme
   schedule:
-    - cron: '0 12 * * *'  # Opsiyonel: her gün saat 12'de otomatik
+    - cron: '0 12 * * *'  # Opsiyonel: her gün 12:00'de otomatik
 
 jobs:
   domain_check:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Set up Python
@@ -23,15 +23,18 @@ jobs:
           pip install requests
 
       - name: Run domain checker
+        id: run_domain_checker
         env:
           AUTO_DOMAIN_CHECK: 1
-        run: python find_domain.py
-
-      - name: Upload working_domain.txt if exists
         run: |
-          if [ -f working_domain.txt ]; then
-            echo "Uploading working_domain.txt..."
-            gh run upload-artifact working-domain working_domain.txt
-          else
-            echo "No domain found, skipping upload."
-          fi
+          python find_domain.py
+          DOMAIN_FOUND=$(grep DOMAIN_FOUND=true working_domain.txt || echo false)
+          echo "DOMAIN_FOUND=$DOMAIN_FOUND"
+          echo "DOMAIN_FOUND=$DOMAIN_FOUND" >> $GITHUB_ENV
+
+      - name: Upload working_domain.txt if domain found
+        if: env.DOMAIN_FOUND == 'true'
+        uses: actions/upload-artifact@v3
+        with:
+          name: working-domain
+          path: working_domain.txt
