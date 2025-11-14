@@ -22,7 +22,8 @@ jobs:
         run: pip install requests
 
       - name: Run domain checker
-        run: python find_domain.py
+        run: |
+          python find_domain.py
 
       - name: Debug: list repo files
         run: |
@@ -35,7 +36,8 @@ jobs:
           find $GITHUB_WORKSPACE -name working_domain.txt
 
       - name: Show working_domain.txt
-        run: cat $GITHUB_WORKSPACE/working_domain.txt
+        run: |
+          cat $GITHUB_WORKSPACE/working_domain.txt
 
       - name: Upload working_domain.txt
         uses: actions/upload-artifact@v4
