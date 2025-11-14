@@ -8,7 +8,7 @@ HEADERS = {"User-Agent": USER_AGENT}
 def check_domain(i):
     url = f"https://justsporthd{i}.xyz/"
     try:
-        r = requests.get(url, headers=HEADERS, timeout=10)  # Timeout artırıldı
+        r = requests.get(url, headers=HEADERS, timeout=10)
         if r.status_code == 200 and "JustSportHD" in r.text:
             return url
     except Exception as e:
@@ -30,19 +30,31 @@ def main():
         input("Domain taramasını başlatmak için Enter'a basın...")
 
     domain = find_working_domain_parallel()
+    current_dir = os.getcwd()
+    file_path = os.path.join(current_dir, "working_domain.txt")
+
     if domain:
         print(f"Çalışan domain bulundu: {domain}")
-        with open("working_domain.txt", "w") as f:
+        print(f"Dosya yazılacak: {file_path}")
+        with open(file_path, "w") as f:
             f.write(domain)
+
         # Workflow için env değişkeni
-        with open(os.environ["GITHUB_ENV"], "a") as env:
-            env.write("DOMAIN_FOUND=true\n")
-            env.write(f"DOMAIN_URL={domain}\n")  # domain’i ayrıca environment olarak kaydediyoruz
+        github_env = os.environ.get("GITHUB_ENV")
+        if github_env:
+            with open(github_env, "a") as env_file:
+                env_file.write("DOMAIN_FOUND=true\n")
+                env_file.write(f"DOMAIN_URL={domain}\n")
     else:
         print("Domain bulunamadı.")
-        # Dosya yazmayacağız, sadece workflow değişkenini false yapacağız
-        with open(os.environ["GITHUB_ENV"], "a") as env:
-            env.write("DOMAIN_FOUND=false\n")
+        github_env = os.environ.get("GITHUB_ENV")
+        if github_env:
+            with open(github_env, "a") as env_file:
+                env_file.write("DOMAIN_FOUND=false\n")
+
+    # Debug: mevcut dizini ve dosyaları listele
+    print("Mevcut dizin:", current_dir)
+    print("Dizin içeriği:", os.listdir(current_dir))
 
 if __name__ == "__main__":
     main()
