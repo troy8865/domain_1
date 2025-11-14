@@ -1,38 +1,24 @@
-name: Find JustSportHD Domain
+name: Test File Creation
 
 on:
-  workflow_dispatch:  # Elle tetikleme
-  schedule:
-    - cron: '0 12 * * *'  # Otomatik tetikleme her gün 12:00
+  workflow_dispatch:
 
 jobs:
-  domain_check:
+  test_file:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Set up Python
+      - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install requests
-
-      - name: Run domain checker
-        id: run_domain_checker
-        env:
-          AUTO_DOMAIN_CHECK: 1
+      - name: Run test script
         run: python find_domain.py
 
-      - name: List files for debugging
+      - name: List files
         run: ls -la
-
-      - name: Show working_domain.txt contents
-        run: cat working_domain.txt
 
       - name: Upload working_domain.txt
         uses: actions/upload-artifact@v4
