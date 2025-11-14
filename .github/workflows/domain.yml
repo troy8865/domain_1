@@ -3,7 +3,7 @@ name: Find JustSportHD Domain
 on:
   workflow_dispatch:  # Elle tetikleme
   schedule:
-    - cron: '0 12 * * *'  # Otomatik tetikleme (opsiyonel)
+    - cron: '0 12 * * *'  # Otomatik tetikleme
 
 jobs:
   domain_check:
@@ -27,6 +27,10 @@ jobs:
         env:
           AUTO_DOMAIN_CHECK: 1
         run: python find_domain.py
+
+      - name: List working_domain.txt contents (debug)
+        if: env.DOMAIN_FOUND == 'true'
+        run: cat working_domain.txt
 
       - name: Upload working_domain.txt if domain found
         if: env.DOMAIN_FOUND == 'true'
