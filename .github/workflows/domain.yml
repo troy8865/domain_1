@@ -1,27 +1,37 @@
-name: Test File Creation
+name: Find JustSportHD Domain
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # Elle tetikleme
+  schedule:
+    - cron: '0 12 * * *'  # Günlük 12:00 otomatik
 
 jobs:
-  test_file:
+  domain_check:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
-      - name: Run test script
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run domain checker
         run: python find_domain.py
 
-      - name: List files
-        run: ls -la
+      - name: Debug: list repo files
+        run: ls -la $GITHUB_WORKSPACE
+
+      - name: Show working_domain.txt
+        run: cat $GITHUB_WORKSPACE/working_domain.txt
 
       - name: Upload working_domain.txt
         uses: actions/upload-artifact@v4
         with:
           name: working-domain
-          path: working_domain.txt
+          path: $GITHUB_WORKSPACE/working_domain.txt
