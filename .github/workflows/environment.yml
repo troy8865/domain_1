@@ -1,14 +1,35 @@
-name: justsporthd_domain
-channels:
-  - defaults
-dependencies:
-  - python=3.11
-  - pip
-  - pip:
-      - requests
-prefix: ./env
+name: Find JustSportHD Domain
 
-postBuild:
-  - echo "Otomatik domain taraması başlatılıyor..."
-  - export AUTO_DOMAIN_CHECK=1
-  - python find_domain.py
+on:
+  workflow_dispatch:  # Elle tetikleme için
+  schedule:
+    - cron: '0 12 * * *'  # Opsiyonel: her gün saat 12'de otomatik
+
+jobs:
+  domain_check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Run domain checker
+        env:
+          AUTO_DOMAIN_CHECK: 1
+        run: python find_domain.py
+
+      - name: Upload working_domain.txt
+        if: success() && exists('working_domain.txt')
+        uses: actions/upload-artifact@v3
+        with:
+          name: working-domain
+          path: working_domain.txt
