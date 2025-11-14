@@ -34,9 +34,10 @@ def main():
         print("Çalışan domain bulundu:", domain)
         with open("working_domain.txt", "w") as f:
             f.write(domain)
-            print("Domain working_domain.txt dosyasına kaydedildi.")
+        print("DOMAIN_FOUND=true")  # workflow output için
     else:
         print("Domain bulunamadı.")
+        print("DOMAIN_FOUND=false")  # workflow output için
 
 if __name__ == "__main__":
     main()
