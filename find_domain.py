@@ -35,7 +35,6 @@ def main():
         with open("working_domain.txt", "w") as f:
             f.write(domain)
         # Workflow için env değişkeni olarak kaydet
-        print("DOMAIN_FOUND=true")
         with open(os.environ["GITHUB_ENV"], "a") as env:
             env.write("DOMAIN_FOUND=true\n")
     else:
